@@ -1,9 +1,3 @@
--- ============================================
--- [BE14] MySQL 연습문제 (12강) - scott 스키마
--- 아래 스키마를 먼저 실행한 뒤, 각 문제 아래에 SQL을 작성하세요.
--- ============================================
-
--- ===== 스키마 및 데이터 세팅 (그대로 실행) =====
 SET SESSION sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));
 SET sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));
 
@@ -61,86 +55,163 @@ INSERT INTO SALGRADE VALUES (3,1401,2000);
 INSERT INTO SALGRADE VALUES (4,2001,3000);
 INSERT INTO SALGRADE VALUES (5,3001,9999);
 
-
--- ===== 연습 문제 (각 문제 아래에 답을 작성) =====
 #1. 사원 테이블의 모든 레코드를 조회하시오.
-
+SELECT *
+FROM EMP;
 
 #2. 사원명과 입사일을 조회하시오.
-
+SELECT ENAME, HIREDATE
+FROM EMP;
 
 #3. 사원번호와 이름을 조회하시오.
-
+SELECT EMPNO, ENAME
+FROM EMP;
 
 #4. 사원테이블에 있는 직책의 목록을 조회하시오. (hint : distinct, group by)
-
+SELECT DISTINCT JOB
+FROM EMP;
 
 #5. 총 사원수를 구하시오. (hint : count)
-
+SELECT COUNT(*)
+FROM EMP;
 
 #6. 부서번호가 10인 사원을 조회하시오.
+SELECT *
+FROM EMP
+WHERE DEPTNO = 10;
 
 
 #7. 월급여가 2500이상 되는 사원을 조회하시오.
-
+SELECT *
+FROM EMP
+WHERE SAL >= 2500;
 
 #8. 이름이 'KING'인 사원을 조회하시오.
-
+SELECT *
+FROM EMP
+WHERE ENAME = 'KING';
 
 #9. 사원들 중 이름이 S로 시작하는 사원의 사원번호와 이름을 조회하시오. (hint : like)
-
+SELECT EMPNO, ENAME
+FROM EMP
+WHERE ENAME LIKE 'S%';
 
 #10. 사원 이름에 T가 포함된 사원의 사원번호와 이름을 조회하시오. (hint : like)
-
+SELECT EMPNO, ENAME
+FROM EMP
+WHERE ENAME LIKE '%T%';
 
 #11. 커미션이 300, 500, 1400 인 사원의 사번,이름,커미션을 조회하시오. (hint : OR, in )
+SELECT EMPNO, ENAME, COMM
+FROM EMP
+WHERE COMM IN (300, 500, 1400);
 
+SELECT EMPNO, ENAME, COMM
+FROM EMP
+WHERE COMM = 300
+OR COMM = 500
+OR COMM = 1400;
 
 #12. 월급여가 1200 에서 3500 사이의 사원의 사번,이름,월급여를 조회하시오. (hint : AND, between)
+SELECT EMPNO, ENAME, SAL
+FROM EMP
+WHERE SAL BETWEEN 1200 AND 3500;
 
+SELECT EMPNO, ENAME, SAL
+FROM EMP
+WHERE SAL >=1200
+ANd SAL <= 3500;
 
 #13. 직급이 매니저이고 부서번호가 30번인 사원의 이름,사번,직급,부서번호를 조회하시오. 
-
+SELECT ENAME, EMPNO, JOB, DEPTNO
+FROM EMP
+WHERE JOB = 'MANAGER'
+AND DEPTNO = 30;
 
 #14. 부서번호가 30인 아닌 사원의 사번,이름,부서번호를 조회하시오. (not)
-
+SELECT EMPNO, ENAME, DEPTNO
+FROM EMP
+WHERE NOT DEPTNO = 30;
 
 #15. 커미션이 300, 500, 1400 이 모두 아닌 사원의 사번,이름,커미션을 조회하시오. (hint : not in)
-
+SELECT EMPNO, ENAME, COMM
+FROM EMP
+WHERE COMM NOT IN (300, 500, 1400);
 
 #16. 이름에 S가 포함되지 않는 사원의 사번,이름을 조회하시오. (hint : not like)
-
+SELECT EMPNO, ENAME
+FROM EMP
+WHERE ENAME NOT LIKE '%S%';
 
 #17. 급여가 1200보다 미만이거나 3700 초과하는 사원의 사번,이름,월급여를 조회하시오. (hint : not, between)
-
+SELECT EMPNO, ENAME, SAL
+FROM EMP
+WHERE SAL NOT BETWEEN 1200 AND 3700;
 
 #18. 직속상사가 NULL 인 사원의 이름과 직급을 조회하시오. (hint : is null, is not null)
-
+SELECT ENAME, JOB
+FROM EMP
+WHERE MGR IS NULL;
 
 #19. 부서별 평균월급여를 구하는 쿼리 (hint : group by, avg())
-
+SELECT DEPTNO, AVG(SAL)
+FROM EMP
+GROUP BY DEPTNO;
 
 #20. 부서별 전체 사원수와 커미션을 받는 사원들의 수를 구하는 쿼리 (hint : group by, count())
-
+SELECT DEPTNO,
+COUNT(*),
+COUNT(COMM)
+FROM EMP
+GROUP BY DEPTNO;
 
 #21. 부서별 최대 급여와 최소 급여를 구하는 쿼리 (hint : group by, min(), max())
-
+SELECT DEPTNO, MIN(SAL), MAX(SAL)
+FROM EMP
+GROUP BY DEPTNO;
 
 #22. 부서별로 급여 평균 (단, 부서별 급여 평균이 2000 이상만) (hint : group by, having)
-
+SELECT DEPTNO, AVG(SAL)
+FROM EMP
+GROUP BY DEPTNO
+HAVING AVG(SAL) >= 2000;
 
 #23. 월급여가 1000 이상인 사원만을 대상으로 부서별로 월급여 평균을 구하라. 단, 평균값이 2000 이상인 레코드만 구하라. (hint : group by, having)
-
+SELECT DEPTNO, AVG(SAL)
+FROM EMP
+WHERE SAL >= 1000
+GROUP BY DEPTNO
+HAVING AVG(SAL) >= 2000;
 
 #24. 사원명과 부서명을 조회하시오. (hint : inner join)
-
+SELECT E.ENAME, D.DNAME
+FROM EMP E
+INNER JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO;
 
 #25. 이름,월급여,월급여등급을 조회하시오. (hint : inner join, between)
+SELECT E.ENAME, E.SAL, S.GRADE
+FROM EMP E
+INNER JOIN SALGRADE S
+ON E.SAL BETWEEN S.LOSAL AND S.HISAL;
 
 
 #26. 이름,부서명,월급여등급을 조회하시오. 
-
+SELECT E.ENAME, D.DNAME, S.GRADE
+FROM EMP E
+INNER JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO
+INNER JOIN SALGRADE S
+ON E.SAL BETWEEN S.LOSAL AND S.HISAL;
 
 #27. 이름,직속상사이름을 조회하시오. (hint : self join)
+SELECT E.ENAME, M.ENAME AS MANAGER
+FROM EMP E
+INNER JOIN EMP M
+ON E.MGR = M.EMPNO;
 
 #28. 이름,직속상사이름을 조회하시오.(단 직속 상사가 없는 사람도 직속상사 결과가 null값으로 나와야 함) (hint : outer join)
+SELECT E.ENAME, M.ENAME AS MANAGER
+FROM EMP E
+LEFT OUTER JOIN EMP M
+ON E.MGR = M.EMPNO;
